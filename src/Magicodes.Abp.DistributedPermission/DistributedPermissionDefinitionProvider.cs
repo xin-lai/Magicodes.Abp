@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Caching.Distributed;
+﻿using Magicodes.Abp.DistributedPermission.Dto;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -7,13 +8,21 @@ using Volo.Abp.Caching;
 
 namespace Magicodes.Abp.DistributedPermission
 {
+    /// <summary>
+    /// 分布式权限定义提供程序（请自行启用分布式Redis缓存）
+    /// </summary>
     public class DistributedPermissionDefinitionProvider : PermissionDefinitionProvider
     {
         private readonly ILogger<DistributedPermissionDefinitionProvider> logger;
         private const string cacheKey = "PermissionGroups";
-        private readonly IDistributedCache<Dictionary<string, PermissionGroupDefinition>> _cache;
+        private readonly IDistributedCache<Dictionary<string, PermissionGroupDto>> _cache;
 
-        public DistributedPermissionDefinitionProvider(ILogger<DistributedPermissionDefinitionProvider> logger, IDistributedCache<Dictionary<string, PermissionGroupDefinition>> cache)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="logger"></param>
+        /// <param name="cache"></param>
+        public DistributedPermissionDefinitionProvider(ILogger<DistributedPermissionDefinitionProvider> logger, IDistributedCache<Dictionary<string, PermissionGroupDto>> cache)
         {
             this.logger = logger;
             _cache = cache;
@@ -22,10 +31,25 @@ namespace Magicodes.Abp.DistributedPermission
         {
             logger.LogInformation($"{nameof(DistributedPermissionDefinitionProvider)}...");
             var permissionDefinitionContext = context as PermissionDefinitionContext;
-            var distributedPermissions = _cache.GetAsync(cacheKey).Result;
+            Dictionary<string, PermissionGroupDto> distributedPermissions = _cache.GetAsync(cacheKey).Result;
             if (distributedPermissions == null)
             {
-                distributedPermissions = permissionDefinitionContext.Groups;
+                distributedPermissions = new Dictionary<string, PermissionGroupDto>();
+                foreach (var item in permissionDefinitionContext.Groups)
+                {
+                    var groupDto = new PermissionGroupDto()
+                    {
+                        Permissions = new List<PermissionDto>()
+                    };
+                    foreach (var childItem in item.Value.Permissions)
+                    {
+                        groupDto.Permissions.Add(new PermissionDto()
+                        {
+                            
+                        });
+                    }
+                    //distributedPermissions.Add(item.Key,)
+                }
             }
             else
             {
@@ -47,11 +71,11 @@ namespace Magicodes.Abp.DistributedPermission
                 {
                     if (distributedPermissions.ContainsKey(item.Key))
                     {
-                        distributedPermissions[item.Key] = item.Value;
+                        //distributedPermissions[item.Key] = item.Value;
                     }
                     else
                     {
-                        distributedPermissions.Add(item.Key, item.Value);
+                        //distributedPermissions.Add(item.Key, item.Value);
                     }
                 }
 

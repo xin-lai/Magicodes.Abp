@@ -10,6 +10,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{B507C088-F
 		common.props = common.props
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Magicodes.Abp.Identity.Application", "src\Magicodes.Abp.Identity.Application\Magicodes.Abp.Identity.Application.csproj", "{12B6C71B-2BC4-4C3E-B240-B098D3C712C8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +22,10 @@ Global
 		{440B121F-5BD2-4FC6-A088-F02DFACD8E7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{440B121F-5BD2-4FC6-A088-F02DFACD8E7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{440B121F-5BD2-4FC6-A088-F02DFACD8E7B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12B6C71B-2BC4-4C3E-B240-B098D3C712C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12B6C71B-2BC4-4C3E-B240-B098D3C712C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12B6C71B-2BC4-4C3E-B240-B098D3C712C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12B6C71B-2BC4-4C3E-B240-B098D3C712C8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
