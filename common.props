@@ -1,0 +1,25 @@
+<Project>
+  <PropertyGroup>
+    <Version>4.4.0.1</Version>
+  </PropertyGroup>
+  <PropertyGroup>
+    <Authors>雪雁</Authors>
+    <Product>麦扣</Product>
+    <PackageProjectUrl>https://docs.xin-lai.com/</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/xin-lai/Magicodes.Abp</RepositoryUrl>
+    <PackageTags>Magicodes.Abp;abp vnext</PackageTags>
+    <Description>
+      开源库地址:https://github.com/xin-lai
+      博客地址：http://www.cnblogs.com/codelove/
+      公众号：麦扣聊技术
+      交流QQ群：85318032
+
+      **2021.08.07**
+      - 添加Magicodes.Abp.DistributedPermission，以支持分布式权限
+
+    </Description>
+  </PropertyGroup>
+  <PropertyGroup>
+    <DocumentationFile>bin\$(Configuration)\$(TargetFramework)\$(AssemblyName).xml</DocumentationFile>
+  </PropertyGroup>
+</Project>
