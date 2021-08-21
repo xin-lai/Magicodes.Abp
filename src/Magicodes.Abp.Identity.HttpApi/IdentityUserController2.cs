@@ -26,5 +26,11 @@ namespace Volo.Abp.Identity
         {
             return UserAppService.GetListAsync(input);
         }
+
+        [HttpPut("batch")]
+        public virtual Task BatchUpdateAsync(IdentityUserBatchUpdateDto input)
+        {
+            return UserAppService.BatchUpdateAsync(input);
+        }
     }
 }

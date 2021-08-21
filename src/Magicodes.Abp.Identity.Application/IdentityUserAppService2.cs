@@ -52,5 +52,50 @@ namespace Magicodes.Abp.Identity.Application
                 outList
             );
         }
+
+        [Authorize(IdentityPermissions.Users.Update)]
+        public virtual async Task BatchUpdateAsync(IdentityUserBatchUpdateDto input)
+        {
+            await IdentityOptions.SetAsync();
+
+            foreach (var item in input.Rows)
+            {
+                var user = await UserManager.GetByIdAsync(item.Id);
+                user.ConcurrencyStamp = item.ConcurrencyStamp;
+
+                (await UserManager.SetUserNameAsync(user, item.UserName)).CheckErrors();
+
+                await UpdateUserByInput(user, item);
+                item.MapExtraPropertiesTo(user);
+
+                (await UserManager.UpdateAsync(user)).CheckErrors();
+            }
+
+            await CurrentUnitOfWork.SaveChangesAsync();
+        }
+
+        protected virtual async Task UpdateUserByInput(IdentityUser user, IdentityUserCreateOrUpdateDtoBase input)
+        {
+            if (!string.Equals(user.Email, input.Email, StringComparison.InvariantCultureIgnoreCase))
+            {
+                (await UserManager.SetEmailAsync(user, input.Email)).CheckErrors();
+            }
+
+            if (!string.Equals(user.PhoneNumber, input.PhoneNumber, StringComparison.InvariantCultureIgnoreCase))
+            {
+                (await UserManager.SetPhoneNumberAsync(user, input.PhoneNumber)).CheckErrors();
+            }
+
+            (await UserManager.SetLockoutEnabledAsync(user, input.LockoutEnabled)).CheckErrors();
+
+            user.Name = input.Name;
+            user.Surname = input.Surname;
+            (await UserManager.UpdateAsync(user)).CheckErrors();
+
+            if (input.RoleNames != null)
+            {
+                (await UserManager.SetRolesAsync(user, input.RoleNames)).CheckErrors();
+            }
+        }
     }
 }
