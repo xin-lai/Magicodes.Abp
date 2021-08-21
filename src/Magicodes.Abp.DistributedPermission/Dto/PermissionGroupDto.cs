@@ -7,13 +7,15 @@ using Volo.Abp.MultiTenancy;
 
 namespace Magicodes.Abp.DistributedPermission.Dto
 {
-    public class PermissionGroupDto : PermissionGroupDefinition
+    public class PermissionGroupDto
     {
-        public PermissionGroupDto()
-        {
+        public string Name { get; set; }
 
-        }
+        public string DisplayName { get; set; }
 
-        public new List<PermissionDto> Permissions { get; set; }
+        public MultiTenancySides MultiTenancySide { get; set; }
+
+        public ICollection<PermissionDto> Permissions { get; set; }
+
     }
 }
