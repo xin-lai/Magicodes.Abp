@@ -131,6 +131,7 @@ namespace Magicodes.Abp.DistributedPermission
             var distributedPermissions = distributedPermissionCache.PermissionGroups.ToList();
             foreach (var item in permissionDefinitionContext.Groups)
             {
+                logger.LogInformation($"PermissionGroup:{item.Value.Name}");
                 var groupDto = new PermissionGroupDto()
                 {
                     Permissions = new List<PermissionDto>(),
@@ -156,6 +157,7 @@ namespace Magicodes.Abp.DistributedPermission
 
         private void AddPermission(PermissionGroupDto groupDto, PermissionDefinition childItem, PermissionDto parentPermission = null)
         {
+            logger.LogInformation($"Permission:{childItem.Name}");
             var permission = new PermissionDto()
             {
                 DisplayName = Localizer[childItem.Name],
