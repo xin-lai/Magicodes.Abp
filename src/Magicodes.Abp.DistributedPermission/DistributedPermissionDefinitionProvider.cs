@@ -10,6 +10,7 @@ using Volo.Abp.Localization;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Localization;
 using Volo.Abp;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Magicodes.Abp.DistributedPermission
 {
@@ -24,35 +25,25 @@ namespace Magicodes.Abp.DistributedPermission
         private readonly IStringLocalizerFactory stringLocalizerFactory;
         private readonly AbpLocalizationOptions abpLocalizationOptions;
 
-        private IStringLocalizer _localizer;
-        protected IStringLocalizer Localizer
-        {
-            get
-            {
-                if (_localizer == null)
-                {
-                    _localizer = CreateLocalizer();
-                }
-
-                return _localizer;
-            }
-        }
-
         /// <summary>
         /// 
         /// </summary>
         /// <param name="logger"></param>
         /// <param name="cache"></param>
         /// <param name="abpLocalizationOptions"></param>
-        public DistributedPermissionDefinitionProvider(ILogger<DistributedPermissionDefinitionProvider> logger, IDistributedCache<PermissionCacheDto> cache,
-          IOptions<AbpLocalizationOptions> abpLocalizationOptions,
-          IStringLocalizerFactory stringLocalizerFactory)
+        /// <param name="stringLocalizerFactory"></param>
+        public DistributedPermissionDefinitionProvider(
+            ILogger<DistributedPermissionDefinitionProvider> logger,
+            IDistributedCache<PermissionCacheDto> cache,
+            IOptions<AbpLocalizationOptions> abpLocalizationOptions,
+            IStringLocalizerFactory stringLocalizerFactory)
         {
             this.logger = logger;
             _cache = cache;
             this.stringLocalizerFactory = stringLocalizerFactory;
             this.abpLocalizationOptions = abpLocalizationOptions.Value;
         }
+
         public override void Define(IPermissionDefinitionContext context)
         {
             logger.LogInformation($"{nameof(DistributedPermissionDefinitionProvider)}...");
@@ -131,11 +122,13 @@ namespace Magicodes.Abp.DistributedPermission
             var distributedPermissions = distributedPermissionCache.PermissionGroups.ToList();
             foreach (var item in permissionDefinitionContext.Groups)
             {
-                logger.LogInformation($"PermissionGroup:{item.Value.Name}");
+                var displayName = item.Value.DisplayName.Localize(stringLocalizerFactory)?.Value;
+                logger.LogInformation($"PermissionGroup:{item.Value.Name} {displayName}");
+
                 var groupDto = new PermissionGroupDto()
                 {
                     Permissions = new List<PermissionDto>(),
-                    DisplayName = Localizer[item.Value.Name],
+                    DisplayName = displayName,
                     MultiTenancySide = item.Value.MultiTenancySide,
                     Name = item.Value.Name
                 };
@@ -157,10 +150,12 @@ namespace Magicodes.Abp.DistributedPermission
 
         private void AddPermission(PermissionGroupDto groupDto, PermissionDefinition childItem, PermissionDto parentPermission = null)
         {
-            logger.LogInformation($"Permission:{childItem.Name}");
+            var displayName = childItem.DisplayName.Localize(stringLocalizerFactory)?.Value;
+            logger.LogInformation($"Permission:{childItem.Name} {displayName}");
+
             var permission = new PermissionDto()
             {
-                DisplayName = Localizer[childItem.Name],
+                DisplayName = displayName,
                 MultiTenancySide = childItem.MultiTenancySide,
                 Name = childItem.Name,
                 IsEnabled = childItem.IsEnabled
@@ -183,17 +178,6 @@ namespace Magicodes.Abp.DistributedPermission
         private LocalizableString L(string name)
         {
             return new LocalizableString(abpLocalizationOptions.DefaultResourceType, name);
-        }
-
-        protected virtual IStringLocalizer CreateLocalizer()
-        {
-            var localizer = stringLocalizerFactory.CreateDefaultOrNull();
-            if (localizer == null)
-            {
-                throw new AbpException($"Set {nameof(LocalizationResource)} or define the default localization resource type (by configuring the {nameof(AbpLocalizationOptions)}.{nameof(AbpLocalizationOptions.DefaultResourceType)}) to be able to use the {nameof(L)} object!");
-            }
-
-            return localizer;
         }
     }
 }
